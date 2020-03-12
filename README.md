@@ -45,9 +45,10 @@ use Omnipay\Omnipay;
 $gateway = Omnipay::create('Square');
 $gateway->setAccessToken("YOUR-ACCESS-TOKEN-HERE");
 $gateway->setParameter("testMode", true);  // enable sandbox testing
+```
 
 ## Take a payment example
-
+```
 $purchase = [
     'amount' => 10,
     'currency' => 'AUD',
@@ -63,9 +64,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Refund example
-
+```
 $refundPayment = [
     'idempotencyKey' => uniqid(),
     'amount' => 1,
@@ -80,9 +81,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Create a customer example
-
+```
 $newCustomer = [
     'firstName' => 'test',
     'lastName' => 'test',
@@ -108,9 +109,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Update customer example
-
+```
 $updateCustomer = [
     'customerReference' => 'DQ5ADHPB8GWKF6AEBP44Q8AZP4',
     'firstName' => 'test',
@@ -137,9 +138,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Create a card for customer example
-
+```
 $customerCard = [
     "customerReference" => "Y2QP0W93PWYWNBT3PTX5CAMKXC",
     "card" => "cnon:CBASEIP-9iU6Y9hLwvbKlU9mkcM",
@@ -152,9 +153,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Delete customer example
-
+```
 $deleteCustomer = [
     'customerReference' => '9E9X4YNDYH53VFZ32JD5EB55PG',
 ];
@@ -165,9 +166,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Delete customer card example
-
+```
 $deleteCustomerCard = [
     'customerReference' => '9E9X4YNDYH53VFZ32JD5EB55PG',
     'cardReference' => 'ccof:yZmvTQ2YfslSRKHi4GB'
@@ -179,9 +180,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Retrieve customer example
-
+```
 $fetchCustomer = [
 	'customerReference' => 'DQ5ADHPB8GWKF6AEBP44Q8AZP4',
 ];
@@ -192,9 +193,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Retrieve customer cards example
-
+```
 $fetchCustomerCard = [
 	'customerReference' => 'DQ5ADHPB8GWKF6AEBP44Q8AZP4',
 	'card' => 'ccof:eTAtmHpmpE8kfshh3GB'
@@ -205,9 +206,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Retrieve payment refunds example
-
+```
 $listPaymentRefunds = [
     'beginTime' => '2020-01-12T01:06:23.798Z',
     'endTime' => '2020-03-12T01:06:23.798Z',
@@ -224,9 +225,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Retrieve payments example
-
+```
 $listPayments = [
     'beginTime' => '2020-01-12T01:06:23.798Z',
     'endTime' => '2020-03-12T01:06:23.798Z',
@@ -243,9 +244,9 @@ try {
 } catch(\Exception $e) {
     echo $e->getMessage();
 }
-
+```
 ## Refund payment example
-
+```
 $refundPayment = [
 	'idempotencyKey' => uniqid(),
 	'amount' => 1,
