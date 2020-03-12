@@ -2,109 +2,147 @@
 
 namespace Omnipay\Square\Message;
 
-use Omnipay\Common\Message\AbstractRequest;
-use SquareConnect;
-
 /**
  * Square Create Customer Request
  */
 class CreateCustomerRequest extends AbstractRequest
 {
-    public function getAccessToken()
-    {
-        return $this->getParameter('accessToken');
-    }
 
-    public function setAccessToken($value)
-    {
-        return $this->setParameter('accessToken', $value);
-    }
+	public function getFirstName()
+	{
+		return $this->getParameter('firstName');
+	}
 
-    public function getFirstName()
-    {
-        return $this->getParameter('firstName');
-    }
+	public function setFirstName($value)
+	{
+		return $this->setParameter('firstName', $value);
+	}
 
-    public function setFirstName($value)
-    {
-        return $this->setParameter('firstName', $value);
-    }
+	public function getLastName()
+	{
+		return $this->getParameter('lastName');
+	}
 
-    public function getLastName()
-    {
-        return $this->getParameter('lastName');
-    }
+	public function setLastName($value)
+	{
+		return $this->setParameter('lastName', $value);
+	}
 
-    public function setLastName($value)
-    {
-        return $this->setParameter('lastName', $value);
-    }
+	public function getCompanyName()
+	{
+		return $this->getParameter('companyName');
+	}
 
-    public function getCompanyName()
-    {
-        return $this->getParameter('companyName');
-    }
+	public function setCompanyName($value)
+	{
+		return $this->setParameter('companyName', $value);
+	}
 
-    public function setCompanyName($value)
-    {
-        return $this->setParameter('companyName', $value);
-    }
+	public function getEmail()
+	{
+		return $this->getParameter('email');
+	}
 
-    public function getEmail()
-    {
-        return $this->getParameter('email');
-    }
+	public function setEmail($value)
+	{
+		return $this->setParameter('email', $value);
+	}
 
-    public function setEmail($value)
-    {
-        return $this->setParameter('email', $value);
-    }
+	public function setAddress($value)
+	{
+		$address = new \SquareConnect\Model\Address($value);
+		$addressArray = json_decode((string) $address, true);
+		return $this->setParameter('address', $addressArray);
+	}
 
-    public function getData()
-    {
-        $data = [];
+	public function getAddress()
+	{
+		return $this->getParameter('address');
+	}
 
-        $data['given_name'] = $this->getFirstName();
-        $data['family_name'] = $this->getLastName();
-        $data['company_name'] = $this->getCompanyName();
-        $data['email_address'] = $this->getEmail();
 
-        return $data;
-    }
+	public function getPhoneNumber()
+	{
+		return $this->getParameter('phoneNumber');
+	}
 
-    public function sendData($data)
-    {
-        SquareConnect\Configuration::getDefaultConfiguration()->setAccessToken($this->getAccessToken());
+	public function setPhoneNumber($value)
+	{
+		return $this->setParameter('phoneNumber', $value);
+	}
 
-        $api_instance = new SquareConnect\Api\CustomersApi();
+	public function getNickName()
+	{
+		return $this->getParameter('nickName');
+	}
 
-        try {
-            $result = $api_instance->createCustomer($data);
+	public function setNickName($value)
+	{
+		return $this->setParameter('nickName', $value);
+	}
 
-            if ($error = $result->getErrors()) {
-                $response = [
-                    'status' => 'error',
-                    'code' => $error['code'],
-                    'detail' => $error['detail']
-                ];
-            } else {
-                $response = [
-                    'status' => 'success',
-                    'customer' => $result->getCustomer()
-                ];
-            }
-        } catch (\Exception $e) {
-            $response = [
-                'status' => 'error',
-                'detail' => 'Exception when creating customer: ' . $e->getMessage()
-            ];
-        }
+	public function getReferenceId()
+	{
+		return $this->getParameter('referenceId');
+	}
 
-        return $this->createResponse($response);
-    }
+	public function setReferenceId($value)
+	{
+		return $this->setParameter('referenceId', $value);
+	}
 
-    public function createResponse($response)
-    {
-        return $this->response = new CustomerResponse($this, $response);
-    }
+	public function getNote()
+	{
+		return $this->getParameter('note');
+	}
+
+	public function setNote($value)
+	{
+		return $this->setParameter('note', $value);
+	}
+
+	public function getBirthday()
+	{
+		return $this->getParameter('birthday');
+	}
+
+	public function setBirthday($value)
+	{
+		return $this->setParameter('birthday', $value);
+	}
+
+	public function getData()
+	{
+		$data = [];
+
+		$data['given_name'] = $this->getFirstName();
+		$data['family_name'] = $this->getLastName();
+		$data['company_name'] = $this->getCompanyName();
+		$data['email_address'] = $this->getEmail();
+		$data['address'] = $this->getAddress();
+		$data['phone_number'] = $this->getPhoneNumber();
+		$data['nickname'] = $this->getNickName();
+		$data['address'] = $this->getAddress();
+		$data['reference_id'] = $this->getReferenceId();
+		$data['note'] = $this->getNote();
+		$data['birthday'] = $this->getBirthday();
+
+		return $data;
+	}
+
+	public function sendData($data)
+	{
+		try {
+			$api_instance = new \SquareConnect\Api\CustomersApi($this->getClientApi());
+			$httpResponse = $api_instance->createCustomer($data);
+			$responseArray = json_decode($httpResponse, true);
+
+			return $this->response = new CustomerResponse($this, $responseArray);
+		} catch (\SquareConnect\ApiException $e) {
+			$responseArray = json_decode(json_encode($e->getResponseBody()), true);
+			return $this->response = new CustomerResponse($this, $responseArray);
+		} catch (\Exception $e) {
+			throw $e;
+		}
+	}
 }

@@ -152,14 +152,14 @@ class Gateway extends AbstractGateway
 
 
     /**
-     * Transaction request functions
+     * Payment request functions
      * @param array $parameters
      * @return \Omnipay\Common\Message\AbstractRequest
      */
 
-    public function listTransactions(array $parameters = [])
+    public function listPayments(array $parameters = [])
     {
-        return $this->createRequest('\Omnipay\Square\Message\ListTransactionsRequest', $parameters);
+        return $this->createRequest('\Omnipay\Square\Message\ListPaymentsRequest', $parameters);
     }
 
 

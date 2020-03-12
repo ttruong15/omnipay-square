@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Created by IntelliJ IDEA.
  * User: Dylan
@@ -8,91 +9,41 @@
 
 namespace Omnipay\Square\Message;
 
-
-
-use Omnipay\Common\Message\AbstractRequest;
-use Omnipay\Common\Message\ResponseInterface;
-use SquareConnect;
-
 class FetchCustomerRequest extends AbstractRequest
 {
 
+	public function setCustomerReference($value)
+	{
+		return $this->setParameter('customerReference', $value);
+	}
 
-    public function getAccessToken()
-    {
-        return $this->getParameter('accessToken');
-    }
+	public function getCustomerReference()
+	{
+		return $this->getParameter('customerReference');
+	}
 
-    public function setAccessToken($value)
-    {
-        return $this->setParameter('accessToken', $value);
-    }
+	public function getData()
+	{
+		$data = [];
 
-    public function setCustomerReference($value)
-    {
-        return $this->setParameter('customerReference', $value);
-    }
+		$data['customer_id'] = $this->getCustomerReference();
 
+		return $data;
+	}
 
-    public function getCustomerReference()
-    {
-        return $this->getParameter('customerReference');
-    }
-    /**
-     * Get the raw data array for this message. The format of this varies from gateway to
-     * gateway, but will usually be either an associative array, or a SimpleXMLElement.
-     *
-     * @return mixed
-     */
-    public function getData()
-    {
-        $data = [];
+	public function sendData($data)
+	{
+		try {
+			$api_instance = new \SquareConnect\Api\CustomersApi($this->getClientApi());
+			$httpResponse = $api_instance->retrieveCustomer($data['customer_id']);
+			$responseArray = json_decode($httpResponse, true);
 
-        $data['customer_id'] = $this->getCustomerReference();
-
-        return $data;
-    }
-
-    /**
-     * Send the request with specified data
-     *
-     * @param  mixed $data The data to send
-     * @return ResponseInterface
-     */
-    public function sendData($data)
-    {
-        SquareConnect\Configuration::getDefaultConfiguration()->setAccessToken($this->getAccessToken());
-
-        $api_instance = new SquareConnect\Api\CustomersApi();
-
-        try {
-            $result = $api_instance->retrieveCustomer($data['customer_id']);
-
-            if ($error = $result->getErrors()) {
-                $response = [
-                    'status' => 'error',
-                    'code' => $error['code'],
-                    'detail' => $error['detail']
-                ];
-            } else {
-                $response = [
-                    'status' => 'success',
-                    'customer' => $result->getCustomer()
-                ];
-            }
-        } catch (\Exception $e) {
-            $response = [
-                'status' => 'error',
-                'detail' => 'Exception when creating customer: ', $e->getMessage()
-            ];
-        }
-
-        return $this->createResponse($response);
-    }
-
-    public function createResponse($response)
-    {
-        return $this->response = new CustomerResponse($this, $response);
-    }
-
+			return $this->response = new CustomerResponse($this, $responseArray);
+		} catch (\SquareConnect\ApiException $e) {
+			$responseArray = json_decode(json_encode($e->getResponseBody()), true);
+			return $this->response = new CustomerResponse($this, $responseArray);
+		} catch (\Exception $e) {
+			throw $e;
+		}
+	}
 }

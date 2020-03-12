@@ -2,195 +2,149 @@
 
 namespace Omnipay\Square\Message;
 
-use Omnipay\Common\Message\AbstractRequest;
-use SquareConnect;
-
 /**
  * Square Purchase Request
  */
 class ChargeRequest extends AbstractRequest
 {
-    public function getAccessToken()
-    {
-        return $this->getParameter('accessToken');
-    }
 
-    public function setAccessToken($value)
-    {
-        return $this->setParameter('accessToken', $value);
-    }
+	public function getReceiptId()
+	{
+		return $this->getParameter('receiptId');
+	}
 
-    public function getLocationId()
-    {
-        return $this->getParameter('locationId');
-    }
+	public function setReceiptId($value)
+	{
+		return $this->setParameter('receiptId', $value);
+	}
 
-    public function setLocationId($value)
-    {
-        return $this->setParameter('locationId', $value);
-    }
+	public function getTransactionId()
+	{
+		return $this->getParameter('transactionId');
+	}
 
-    public function getCheckoutId()
-    {
-        return $this->getParameter('checkoutId');
-    }
+	public function setTransactionId($value)
+	{
+		return $this->setParameter('transactionId', $value);
+	}
 
-    public function setCheckoutId($value)
-    {
-        return $this->setParameter('ReceiptId', $value);
-    }
+	public function getNonce()
+	{
+		return $this->getParameter('nonce');
+	}
 
-    public function getTransactionId()
-    {
-        return $this->getParameter('transactionId');
-    }
+	public function setNonce($value)
+	{
+		return $this->setParameter('nonce', $value);
+	}
 
-    public function setTransactionId($value)
-    {
-        return $this->setParameter('transactionId', $value);
-    }
+	public function setCustomerReference($value)
+	{
+		return $this->setParameter('customerReference', $value);
+	}
 
-    public function getIdempotencyKey()
-    {
-        return $this->getParameter('idempotencyKey');
-    }
+	public function getCustomerReference()
+	{
+		return $this->getParameter('customerReference');
+	}
 
-    public function setIdempotencyKey($value)
-    {
-        return $this->setParameter('idempotencyKey', $value);
-    }
+	public function getCustomerCardId()
+	{
+		return $this->getParameter('customerCardId');
+	}
 
-    public function getNonce()
-    {
-        return $this->getParameter('nonce');
-    }
+	public function setCustomerCardId($value)
+	{
+		return $this->setParameter('customerCardId', $value);
+	}
 
-    public function setNonce($value)
-    {
-        return $this->setParameter('nonce', $value);
-    }
+	public function getReferenceId()
+	{
+		return $this->getParameter('referenceId');
+	}
 
-    public function setCustomerReference($value)
-    {
-        return $this->setParameter('customerReference', $value);
-    }
+	public function setReferenceId($value)
+	{
+		return $this->setParameter('referenceId', $value);
+	}
 
+	public function getOrderId()
+	{
+		return $this->getParameter('orderId');
+	}
 
-    public function getCustomerReference()
-    {
-        return $this->getParameter('customerReference');
-    }
+	public function setOrderId($value)
+	{
+		return $this->setParameter('orderId', $value);
+	}
 
-    public function getCustomerCardId()
-    {
-        return $this->getParameter('customerCardId');
-    }
+	public function getNote()
+	{
+		return $this->getParameter('note');
+	}
 
-    public function setCustomerCardId($value)
-    {
-        return $this->setParameter('customerCardId', $value);
-    }
+	public function setNote($value)
+	{
+		return $this->setParameter('note', $value);
+	}
 
-    public function getReferenceId()
-    {
-        return $this->getParameter('referenceId');
-    }
+	public function setStatementDescriptionIdentifier($value)
+	{
+		return $this->setParameter('statementDescriptionIdentifier', $value);
+	}
 
-    public function setReferenceId($value)
-    {
-        return $this->setParameter('referenceId', $value);
-    }
+	public function getStatementDescriptionIdentifier()
+	{
+		return $this->getParameter('statementDescriptionIdentifier');
+	}
 
-    public function getOrderId()
-    {
-        return $this->getParameter('orderId');
-    }
+	public function setVerificationToken($value)
+	{
+		return $this->setParameter('verificationToken', $value);
+	}
 
-    public function setOrderId($value)
-    {
-        return $this->setParameter('orderId', $value);
-    }
+	public function getVerificationToken()
+	{
+		return $this->getParameter('verificationToken');
+	}
 
-    public function getNote()
-    {
-        return $this->getParameter('note');
-    }
+	public function getData()
+	{
+		$amountMoney = new \SquareConnect\Model\Money();
+		$amountMoney->setAmount($this->getAmountInteger());
+		$amountMoney->setCurrency($this->getCurrency());
 
-    public function setNote($value)
-    {
-        return $this->setParameter('note', $value);
-    }
+		$data = new \SquareConnect\Model\CreatePaymentRequest();
+		$data->setSourceId($this->getNonce() ?? $this->getCustomerCardId());
+		$data->setVerificationToken($this->getToken());
+		$data->setCustomerId($this->getCustomerReference());
+		$data->setNote($this->getNote());
+		$data->setReferenceId($this->getReferenceId());
+		$data->setIdempotencyKey($this->getIdempotencyKey());
+		$data->setAmountMoney($amountMoney);
+		$data->setOrderId($this->getOrderId());
+		$data->setStatementDescriptionIdentifier($this->getStatementDescriptionIdentifier());
+		$data->setVerificationToken($this->getVerificationToken());
+		if ($this->getLocationId()) {
+			$data->setLocationId($this->getLocationId());
+		}
 
-    public function getData()
-    {
-        $data = [];
+		return $data;
+	}
 
-        $data['idempotency_key'] = $this->getIdempotencyKey();
-        $data['amount_money'] = [
-            'amount' => $this->getAmountInteger(),
-            'currency' => $this->getCurrency()
-        ];
-        $data['card_nonce'] = $this->getNonce();
-        $data['customer_id'] = $this->getCustomerReference();
-        $data['customer_card_id'] = $this->getCustomerCardId();
-        $data['reference_id'] = $this->getReferenceId();
-        $data['order_id'] = $this->getOrderId();
-        $data['note'] = $this->getNote();
+	public function sendData($data)
+	{
+		try {
+			$api_instance = new \SquareConnect\Api\PaymentsApi($this->getClientApi());
+			$httpResponse = $api_instance->createPayment($data);
 
-        return $data;
-    }
-
-    public function sendData($data)
-    {
-        SquareConnect\Configuration::getDefaultConfiguration()->setAccessToken($this->getAccessToken());
-
-        $api_instance = new SquareConnect\Api\TransactionsApi();
-
-        $tenders = [];
-
-        try {
-            $result = $api_instance->charge($this->getLocationId(), $data);
-
-            if ($error = $result->getErrors()) {
-                $response = [
-                    'status' => 'error',
-                    'code' => $error['code'],
-                    'detail' => $error['detail']
-                ];
-            } else {
-                $lineItems = $result->getTransaction()->getTenders();
-                if (count($lineItems) > 0) {
-                    foreach ($lineItems as $key => $value) {
-                        $tender = [];
-                        $tender['id'] = $value->getId();
-                        $tender['quantity'] = 1;
-                        $tender['amount'] = $value->getAmountMoney()->getAmount() / 100;
-                        $tender['currency'] = $value->getAmountMoney()->getCurrency();
-                        $item['note'] = $value->getNote();
-                        $tenders[] = $tender;
-                    }
-                }
-                $response = [
-                    'status' => 'success',
-                    'transactionId' => $result->getTransaction()->getId(),
-                    'referenceId' => $result->getTransaction()->getReferenceId(),
-                    'created_at' => $result->getTransaction()->getCreatedAt(),
-                    'orderId' => $result->getTransaction()->getOrderId(),
-                    'tenders' => $tenders
-                ];
-            }
-        } catch (\Exception $e) {
-            $response = [
-                'status' => 'error',
-                'detail' => 'Exception when creating transaction: ' . $e->getMessage()
-            ];
-        }
-
-        return $this->createResponse($response);
-    }
-
-    public function createResponse($response)
-    {
-        return $this->response = new ChargeResponse($this, $response);
-    }
+			$responseArray = json_decode($httpResponse, true);
+			return $this->response = new ChargeResponse($this, $responseArray);
+		} catch (\SquareConnect\ApiException $e) {
+			$responseArray = json_decode(json_encode($e->getResponseBody()), true);
+			return $this->response = new ChargeResponse($this, $responseArray);
+		} catch (\Exception $e) {
+			throw $e;
+		}
+	}
 }

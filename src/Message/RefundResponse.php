@@ -2,28 +2,24 @@
 
 namespace Omnipay\Square\Message;
 
-use Omnipay\Common\Message\AbstractResponse;
-
 /**
  * Square Refund Response
  */
-class RefundResponse extends AbstractResponse
+class RefundResponse extends Response
 {
 
-    public function isSuccessful()
-    {
-        return $this->data['status'] === 'APPROVED';
-    }
+	public function getTransactionId()
+	{
+		return $this->data['refund']['id'] ?? null;
+	}
 
-    public function getMessage()
-    {
-        $message = '';
-        if (array_key_exists('code', $this->data) && strlen($this->data['code'])) {
-            $message .= $this->data['code'] . ': ';
-        }
-        if (array_key_exists('error', $this->data) && strlen($this->data['error'])) {
-            $message .= $this->data['error'];
-        }
-        return $message;
-    }
+	public function getRefunds()
+	{
+		return $this->data['refund'];
+	}
+
+	public function getStatus()
+	{
+		return $this->data['refund']['status'];
+	}
 }
